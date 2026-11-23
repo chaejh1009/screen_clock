@@ -16,7 +16,9 @@ sudo apt update && sudo apt install cage chromium
 python3 start.py
 ```
 
-웹 서버가 시작되고 Cage가 Chromium을 전체 화면으로 띄웁니다. 종료하려면 `Ctrl+Alt+F2`로 다른 콘솔에 들어가 로그인한 뒤, 실행할 때 터미널에 출력된 `kill` 명령을 입력합니다. [Cage 실행 방식](https://github.com/cage-kiosk/cage)
+웹 서버가 시작되고 Cage가 Chromium을 전체 화면으로 띄웁니다. [Cage 실행 방식](https://github.com/cage-kiosk/cage)
+
+`Esc`를 누르거나 화면 오른쪽 위의 **종료** 버튼을 누르면 브라우저와 웹 서버가 닫히고 콘솔로 돌아갑니다.
 
 시각은 브라우저를 실행한 기기의 시스템 시각과 시간대를 따릅니다. 설치 후에는 사진과 글꼴을 포함한 시계 화면이 인터넷 연결 없이 표시됩니다.
 

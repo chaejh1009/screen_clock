@@ -84,13 +84,39 @@ playback.addEventListener("click", () => {
 
 const fullscreen = document.querySelector("#fullscreen");
 const fullscreenLabel = document.querySelector("#fullscreen-label");
-const fullscreenStatus = document.querySelector("#fullscreen-status");
+const toolbarStatus = document.querySelector("#toolbar-status");
 const kioskMode = new URLSearchParams(window.location.search).get("kiosk") === "1";
 
-if (!kioskMode && document.fullscreenEnabled) {
+if (kioskMode) {
+  const exitButton = document.querySelector("#exit-kiosk");
+  exitButton.hidden = false;
+
+  async function exitKiosk() {
+    if (exitButton.disabled) return;
+    exitButton.disabled = true;
+    toolbarStatus.textContent = "";
+
+    try {
+      const response = await fetch("/exit", { method: "POST", mode: "same-origin" });
+      if (response.ok) return;
+    } catch {
+      // Keep the exit button available if the request could not reach the server.
+    }
+    exitButton.disabled = false;
+    toolbarStatus.textContent = "시계를 종료할 수 없습니다.";
+  }
+
+  exitButton.addEventListener("click", exitKiosk);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      exitKiosk();
+    }
+  });
+} else if (document.fullscreenEnabled) {
   fullscreen.hidden = false;
   fullscreen.addEventListener("click", async () => {
-    fullscreenStatus.textContent = "";
+    toolbarStatus.textContent = "";
     try {
       if (document.fullscreenElement) {
         await document.exitFullscreen();
@@ -98,7 +124,7 @@ if (!kioskMode && document.fullscreenEnabled) {
         await document.documentElement.requestFullscreen();
       }
     } catch {
-      fullscreenStatus.textContent = "브라우저에서 전체 화면을 전환할 수 없습니다.";
+      toolbarStatus.textContent = "브라우저에서 전체 화면을 전환할 수 없습니다.";
     }
   });
 

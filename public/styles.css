@@ -112,7 +112,7 @@ button:focus-visible {
   min-height: 2.75rem;
 }
 
-.fullscreen {
+.toolbar-button {
   display: inline-flex;
   align-items: center;
   gap: 0.65rem;
@@ -147,7 +147,12 @@ button:focus-visible {
 :fullscreen .fullscreen-icon i:nth-child(3) { transform: rotate(90deg); }
 :fullscreen .fullscreen-icon i:nth-child(4) { transform: none; }
 
-.fullscreen-status:not(:empty) {
+.toolbar-button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.toolbar-status:not(:empty) {
   position: absolute;
   top: calc(100% + 0.5rem);
   right: 0;
@@ -308,7 +313,7 @@ button:focus-visible {
 }
 
 @media (hover: hover) {
-  .fullscreen:hover, .photo-step:hover, .playback:hover {
+  .toolbar-button:hover, .photo-step:hover, .playback:hover {
     background: rgb(193 235 224 / 18%);
   }
 }

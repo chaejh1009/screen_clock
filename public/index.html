@@ -22,11 +22,12 @@
     </div>
 
     <header class="toolbar">
-      <button id="fullscreen" class="fullscreen" type="button" hidden>
+      <button id="fullscreen" class="toolbar-button" type="button" hidden>
         <span class="fullscreen-icon" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
         <span id="fullscreen-label">전체 화면</span>
       </button>
-      <p id="fullscreen-status" class="fullscreen-status" role="status"></p>
+      <button id="exit-kiosk" class="toolbar-button" type="button" title="종료 (Esc)" aria-keyshortcuts="Escape" hidden>종료</button>
+      <p id="toolbar-status" class="toolbar-status" role="status"></p>
     </header>
 
     <section class="clock" aria-label="현재 시각">

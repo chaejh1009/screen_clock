@@ -2,25 +2,52 @@ import os
 import shutil
 import subprocess
 from functools import partial
+from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from threading import Thread
 
 
-def run_kiosk(command):
-    with subprocess.Popen(command) as kiosk:
+class ClockRequestHandler(SimpleHTTPRequestHandler):
+    def do_POST(self):
+        if self.path != "/exit":
+            self.send_error(HTTPStatus.NOT_FOUND)
+            return
+
+        origin = f"http://127.0.0.1:{self.server.server_port}"
+        if self.headers.get("Origin") != origin:
+            self.send_error(HTTPStatus.FORBIDDEN)
+            return
+
         try:
+            self.send_response(HTTPStatus.NO_CONTENT)
+            self.end_headers()
+        finally:
+            self.server.kiosk.terminate()
+
+
+def run_kiosk(command, server):
+    with subprocess.Popen(command) as kiosk:
+        server.kiosk = kiosk
+        worker = Thread(target=server.serve_forever, daemon=True)
+        try:
+            worker.start()
             print(f"다른 콘솔에서 종료하려면 `kill {kiosk.pid}`를 실행하세요.", flush=True)
             return kiosk.wait()
         except KeyboardInterrupt:
-            kiosk.terminate()
-            try:
-                kiosk.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                kiosk.kill()
-                kiosk.wait()
             return 130
+        finally:
+            if worker.is_alive():
+                server.shutdown()
+                worker.join()
+            if kiosk.poll() is None:
+                kiosk.terminate()
+                try:
+                    kiosk.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    kiosk.kill()
+                    kiosk.wait()
 
 
 def main():
@@ -37,7 +64,7 @@ def main():
     if not (public_dir / "index.html").is_file():
         raise SystemExit("start.py와 함께 public 폴더를 복사하세요.")
 
-    handler = partial(SimpleHTTPRequestHandler, directory=public_dir)
+    handler = partial(ClockRequestHandler, directory=public_dir)
     try:
         with ThreadingHTTPServer(("127.0.0.1", 0), handler) as server, TemporaryDirectory(
             prefix="screen-clock-"
@@ -52,13 +79,7 @@ def main():
                 f"--user-data-dir={profile}",
                 url,
             ]
-            worker = Thread(target=server.serve_forever, daemon=True)
-            worker.start()
-            try:
-                return run_kiosk(command)
-            finally:
-                server.shutdown()
-                worker.join()
+            return run_kiosk(command, server)
     except OSError as error:
         raise SystemExit(f"시계를 시작할 수 없습니다. {error}") from None
 
