@@ -17,8 +17,8 @@
            data-name="로카곶" data-region="포르투갈" style="--focus: 64% 50%">
       <img class="landscape" src="photos/sossusvlei.webp" alt="" decoding="async"
            data-name="소수스블레이" data-region="나미비아">
-      <img class="landscape" src="photos/memoir-notebook.webp" alt="" decoding="async" data-memoir
-           data-name="오늘, 회고록 한 줄" data-region="문득 떠오르는 기억 하나를 적어 봐요.">
+      <img class="landscape" src="photos/memoir-notebook.webp" alt="" decoding="async"
+           data-name="프로젝트 회고 작성 안내" data-review="project-review">
       <img class="landscape" src="photos/zurich.webp" alt="" decoding="async"
            data-name="취리히호의 아침" data-region="스위스">
       <img class="landscape" src="photos/jeju.webp" alt="" decoding="async"
@@ -27,8 +27,8 @@
            data-name="키르큐펠의 오로라" data-region="아이슬란드">
       <img class="landscape" src="photos/redwoods.webp" alt="" decoding="async"
            data-name="레드우드 숲" data-region="미국 · 캘리포니아">
-      <img class="landscape" src="photos/memoir-prints.webp" alt="" decoding="async" data-memoir
-           data-name="기억 속 한 장면" data-region="사진 한 장을 골라, 그날의 이야기를 회고록에 남겨 봐요.">
+      <img class="landscape" src="photos/review-workspace.webp" alt="" decoding="async"
+           data-name="블로그 회고 발행 안내" data-review="blog-review">
     </div>
 
     <header class="toolbar">
@@ -40,16 +40,44 @@
       <p id="toolbar-status" class="toolbar-status" role="status"></p>
     </header>
 
-    <section class="clock" aria-label="현재 시각">
-      <div class="clock-date"><time id="calendar-date"></time></div>
-      <time id="clock-time" class="clock-time">
-        <span id="hour-minute" class="clock-main">--:--</span><span class="visually-hidden">:</span><span id="second" class="clock-second">--</span>
-      </time>
-      <noscript><p>시각을 표시하려면 JavaScript를 켜 주세요.</p></noscript>
-    </section>
+    <div class="screen-content">
+      <section class="clock" aria-label="현재 시각">
+        <div class="clock-date"><time id="calendar-date"></time></div>
+        <time id="clock-time" class="clock-time">
+          <span id="hour-minute" class="clock-main">--:--</span><span class="visually-hidden">:</span><span id="second" class="clock-second">--</span>
+        </time>
+        <noscript><p>시각을 표시하려면 JavaScript를 켜 주세요.</p></noscript>
+      </section>
+
+      <section id="project-review" class="review-panel" aria-labelledby="project-review-heading" hidden>
+        <h2 id="project-review-heading">11월 3주차 블로그 회고</h2>
+        <p>1기 훈련생 여러분, 이번 주 프로젝트에서 진행한 내용을 회고록에 담아 봐요.</p>
+        <ul class="review-checklist">
+          <li>담당 기능 및 구현 내용</li>
+          <li>데이터 처리 및 모델 학습 과정</li>
+          <li>기술 스택 선정 이유</li>
+          <li>트러블슈팅 및 해결 과정</li>
+          <li>GitHub 및 README 정리</li>
+          <li>프로젝트 회고</li>
+        </ul>
+      </section>
+
+      <section id="blog-review" class="review-panel" aria-labelledby="blog-review-heading" hidden>
+        <h2 id="blog-review-heading">블로그 회고 발행 전 확인</h2>
+        <div class="review-post-title">
+          <p class="review-title-label">제목 양식</p>
+          <p class="review-title-text">[SK네트웍스 Family 엔코아AI캠퍼스] AI 레디 데이터 엔지니어링 캠프 1기_11월 3주차 회고</p>
+        </div>
+        <p>제목 양식을 지켜야 기프티콘 추첨에 참여할 수 있어요.</p>
+        <dl class="review-publish-rules">
+          <div><dt>공개 설정</dt><dd>전체 공개</dd></div>
+          <div><dt>등록 플랫폼</dt><dd>네이버 블로그, velog, tistory 등 (노션 불가)</dd></div>
+        </dl>
+      </section>
+    </div>
 
     <footer class="photo-bar">
-      <div class="location">
+      <div id="photo-location" class="location">
         <p id="photo-name" class="photo-name">모레인 호수</p>
         <p id="photo-region" class="photo-region">캐나다 · 밴프 국립공원</p>
       </div>

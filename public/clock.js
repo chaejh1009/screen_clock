@@ -35,6 +35,8 @@ function updateClock() {
 
 const photos = Array.from(document.querySelectorAll(".landscape"));
 const clockScreen = document.querySelector(".screen");
+const reviewPanels = document.querySelectorAll(".review-panel");
+const photoLocation = document.querySelector("#photo-location");
 const photoName = document.querySelector("#photo-name");
 const photoRegion = document.querySelector("#photo-region");
 const photoControls = document.querySelector("#photo-controls");
@@ -48,7 +50,7 @@ const steps = photos.map((photo, index) => {
   const step = document.createElement("button");
   step.type = "button";
   step.className = "photo-step";
-  step.title = `${photo.dataset.name} 사진 보기`;
+  step.title = `${photo.dataset.name} 보기`;
   step.setAttribute("aria-label", step.title);
   step.addEventListener("click", () => showPhoto(index));
   photoSteps.append(step);
@@ -70,9 +72,14 @@ function showPhoto(index) {
   const photo = photos[currentPhoto];
   photo.classList.add("is-current");
   steps[currentPhoto].setAttribute("aria-current", "true");
-  clockScreen.classList.toggle("is-memoir", photo.hasAttribute("data-memoir"));
+  const reviewPanel = document.getElementById(photo.dataset.review ?? "");
+  clockScreen.classList.toggle("is-review", reviewPanel !== null);
+  photoLocation.hidden = reviewPanel !== null;
+  for (const panel of reviewPanels) {
+    panel.hidden = panel !== reviewPanel;
+  }
   photoName.textContent = photo.dataset.name;
-  photoRegion.textContent = photo.dataset.region;
+  photoRegion.textContent = photo.dataset.region ?? "";
   schedulePhoto();
 }
 
