@@ -1,15 +1,94 @@
+import json
 import os
 import shutil
 import subprocess
 from functools import partial
 from http import HTTPStatus
+from http.client import HTTPException
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from io import BytesIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from threading import Thread
+from threading import Event, Thread
+from urllib.parse import urlsplit
+from urllib.request import urlopen
+
+
+REVIEW_URL = "https://raw.githubusercontent.com/chaejh1009/screen_clock/main/public/review.json"
+REVIEW_REFRESH_SECONDS = 600
+REVIEW_MAX_BYTES = 32 * 1024
+
+
+def valid_review(content):
+    if len(content) > REVIEW_MAX_BYTES:
+        return False
+
+    try:
+        data = json.loads(content)
+        project = data["project"]
+        publication = data["publication"]
+        checklist = project["checklist"]
+        rules = publication["rules"]
+        if not isinstance(checklist, list) or not checklist or not isinstance(rules, list) or not rules:
+            return False
+
+        strings = [
+            project["heading"],
+            project["intro"],
+            publication["heading"],
+            publication["titleLabel"],
+            publication["titleNote"],
+            *checklist,
+        ]
+        for rule in rules:
+            strings.extend((rule["label"], rule["value"]))
+        return (
+            all(isinstance(value, str) and value.strip() for value in strings)
+            and isinstance(publication.get("title", ""), str)
+        )
+    except (ValueError, KeyError, TypeError):
+        return False
+
+
+def read_bundled_review(path):
+    try:
+        with path.open("rb") as source:
+            content = source.read(REVIEW_MAX_BYTES + 1)
+    except OSError:
+        return None
+    return content if valid_review(content) else None
+
+
+def sync_review(server, stop):
+    while not stop.is_set():
+        try:
+            with urlopen(REVIEW_URL, timeout=5) as response:
+                content = response.read(REVIEW_MAX_BYTES + 1)
+        except (OSError, HTTPException):
+            pass
+        else:
+            if valid_review(content):
+                server.review_content = content
+        stop.wait(REVIEW_REFRESH_SECONDS)
 
 
 class ClockRequestHandler(SimpleHTTPRequestHandler):
+    def send_head(self):
+        if urlsplit(self.path).path != "/review.json":
+            return super().send_head()
+
+        content = self.server.review_content
+        if content is None:
+            self.send_error(HTTPStatus.SERVICE_UNAVAILABLE)
+            return None
+
+        self.send_response(HTTPStatus.OK)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(content)))
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+        return BytesIO(content)
+
     def do_POST(self):
         if self.path != "/exit":
             self.send_error(HTTPStatus.NOT_FOUND)
@@ -79,7 +158,13 @@ def main():
                 f"--user-data-dir={profile}",
                 url,
             ]
-            return run_kiosk(command, server)
+            server.review_content = read_bundled_review(public_dir / "review.json")
+            sync_stop = Event()
+            Thread(target=sync_review, args=(server, sync_stop), daemon=True).start()
+            try:
+                return run_kiosk(command, server)
+            finally:
+                sync_stop.set()
     except OSError as error:
         raise SystemExit(f"시계를 시작할 수 없습니다. {error}") from None
 

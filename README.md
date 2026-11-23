@@ -1,6 +1,6 @@
 # 풍경 시계
 
-사진 위에 24시간제 현재 시각과 날짜를 표시합니다. 풍경 일곱 장 사이에 1기 훈련생을 위한 주간 블로그 회고 안내 두 장이 섞여 있으며, 사진은 20초마다 바뀝니다. 하단에서 사진 선택과 일시 정지, 상단에서 전체 화면 전환이 가능합니다.
+사진 위에 24시간제 현재 시각과 날짜, 촬영지를 표시합니다. 시간과 영문 지역명에는 주황색 Jost 글꼴을 사용합니다. 풍경 일곱 장 사이에 훈련생을 위한 블로그 회고 안내 두 장이 20초 간격으로 나타나며, 안내 중에도 현재 시각을 볼 수 있습니다. [Jost 글꼴](https://github.com/indestructible-type/Jost)
 
 ## 라즈베리파이에서 실행
 
@@ -20,7 +20,13 @@ python3 start.py
 
 `Esc`를 누르거나 화면 오른쪽 위의 **종료** 버튼을 누르면 브라우저와 웹 서버가 닫히고 콘솔로 돌아갑니다.
 
-시각은 브라우저를 실행한 기기의 시스템 시각과 시간대를 따릅니다. 설치 후에는 사진과 글꼴을 포함한 시계 화면이 인터넷 연결 없이 표시됩니다.
+시각은 브라우저를 실행한 기기의 시스템 시각과 시간대를 따릅니다. 사진과 글꼴, 기본 회고 안내가 포함되어 인터넷 연결 없이도 화면이 표시됩니다.
+
+## 회고 안내 동기화
+
+GitHub `main`의 `public/review.json`을 수정하면 키오스크 서버가 시작할 때와 실행 중 10분마다 새 안내를 가져옵니다. 시작 직후에는 동봉된 안내를 사용할 수 있고, 갱신에 실패하면 현재 안내를 계속 표시합니다. 새 안내는 다음 회고 장면에서 표시됩니다.
+
+`project`에 작성 항목을, `publication`에 발행 기준을 적습니다. 제목 예시를 표시하려면 `publication.title`에 문구를 넣습니다.
 
 ## 같은 네트워크에서 접속
 
@@ -34,7 +40,7 @@ python3 -m http.server 8000 --directory public
 
 ## 사진과 전환 간격 변경
 
-`public/photos/`에 사진을 넣고 `public/index.html`의 `.landscape` 이미지 목록에서 `src`, `data-name`, `data-region`을 바꿉니다. 주차별 블로그 회고 안내 문구와 제목 양식은 같은 파일의 `project-review`와 `blog-review`에서 수정합니다. `public/clock.js`의 `photoInterval`은 밀리초 단위입니다.
+`public/photos/`에 사진을 넣고 `public/index.html`의 `.landscape` 이미지 목록에서 `src`, `data-place`, `data-name`, `data-region`을 바꿉니다. `data-tone`에는 밝은 사진의 `daylight`나 어두운 사진의 `twilight`를 지정할 수 있습니다. `public/clock.js`의 `photoInterval`은 밀리초 단위입니다.
 
 ## 사진 출처
 

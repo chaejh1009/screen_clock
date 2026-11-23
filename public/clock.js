@@ -1,10 +1,11 @@
 const photoInterval = 20_000;
 
 const calendarDate = document.querySelector("#calendar-date");
+const clockPlace = document.querySelector("#clock-place");
 const clockTime = document.querySelector("#clock-time");
 const hourMinute = document.querySelector("#hour-minute");
 const second = document.querySelector("#second");
-const dateFormat = new Intl.DateTimeFormat("ko-KR", { dateStyle: "full" });
+const weekdayFormat = new Intl.DateTimeFormat("ko-KR", { weekday: "long" });
 let clockTimer;
 
 function twoDigits(number) {
@@ -20,7 +21,7 @@ function updateClock() {
 
   if (calendarDate.dateTime !== today) {
     calendarDate.dateTime = today;
-    calendarDate.textContent = dateFormat.format(now);
+    calendarDate.textContent = `${today.replaceAll("-", ".")} · ${weekdayFormat.format(now)}`;
   }
   if (hourMinute.textContent !== hoursAndMinutes) {
     hourMinute.textContent = hoursAndMinutes;
@@ -45,6 +46,8 @@ const playback = document.querySelector("#playback");
 let currentPhoto = 0;
 let playing = true;
 let photoTimer;
+let reviewReady = false;
+let loadingReview = false;
 
 const steps = photos.map((photo, index) => {
   const step = document.createElement("button");
@@ -64,6 +67,62 @@ function schedulePhoto() {
   }
 }
 
+function updatePhotoLayout() {
+  const photo = photos[currentPhoto];
+  const selectedReview = reviewReady ? photo.dataset.review : undefined;
+  clockScreen.classList.toggle("is-review", Boolean(selectedReview));
+  clockScreen.dataset.tone = photo.dataset.tone ?? "";
+  clockPlace.textContent = photo.dataset.place ?? "";
+  clockPlace.hidden = !photo.dataset.place;
+  photoLocation.hidden = Boolean(photo.dataset.review);
+  for (const panel of reviewPanels) {
+    panel.hidden = panel.id !== selectedReview;
+  }
+}
+
+async function refreshReview() {
+  if (loadingReview) return;
+  loadingReview = true;
+  try {
+    const response = await fetch("review.json", { cache: "no-store" });
+    if (!response.ok) return;
+    const { project, publication } = await response.json();
+
+    const checklist = project.checklist.map((item) => {
+      const entry = document.createElement("li");
+      entry.textContent = item;
+      return entry;
+    });
+    const rules = publication.rules.map(({ label, value }) => {
+      const row = document.createElement("div");
+      const term = document.createElement("dt");
+      const detail = document.createElement("dd");
+      term.textContent = label;
+      detail.textContent = value;
+      row.append(term, detail);
+      return row;
+    });
+
+    document.getElementById("project-review-heading").textContent = project.heading;
+    document.getElementById("project-review-intro").textContent = project.intro;
+    document.getElementById("project-review-checklist").replaceChildren(...checklist);
+    document.getElementById("blog-review-heading").textContent = publication.heading;
+    document.getElementById("review-title-label").textContent = publication.titleLabel;
+    document.getElementById("review-title-note").textContent = publication.titleNote;
+    document.getElementById("review-publish-rules").replaceChildren(...rules);
+
+    const example = document.getElementById("review-title-example");
+    example.textContent = publication.title ?? "";
+    example.hidden = !example.textContent.trim();
+    reviewReady = true;
+    updatePhotoLayout();
+  } catch {
+    // Keep the last rendered announcement while its data source is unavailable.
+  } finally {
+    loadingReview = false;
+  }
+}
+
 function showPhoto(index) {
   photos[currentPhoto].classList.remove("is-current");
   steps[currentPhoto].removeAttribute("aria-current");
@@ -72,14 +131,10 @@ function showPhoto(index) {
   const photo = photos[currentPhoto];
   photo.classList.add("is-current");
   steps[currentPhoto].setAttribute("aria-current", "true");
-  const reviewPanel = document.getElementById(photo.dataset.review ?? "");
-  clockScreen.classList.toggle("is-review", reviewPanel !== null);
-  photoLocation.hidden = reviewPanel !== null;
-  for (const panel of reviewPanels) {
-    panel.hidden = panel !== reviewPanel;
-  }
   photoName.textContent = photo.dataset.name;
   photoRegion.textContent = photo.dataset.region ?? "";
+  updatePhotoLayout();
+  if (photo.dataset.review) refreshReview();
   schedulePhoto();
 }
 
@@ -151,4 +206,5 @@ updateClock();
 if (photos.length > 0) {
   showPhoto(0);
   photoControls.hidden = photos.length < 2;
+  refreshReview();
 }
