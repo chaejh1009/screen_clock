@@ -85,8 +85,9 @@ playback.addEventListener("click", () => {
 const fullscreen = document.querySelector("#fullscreen");
 const fullscreenLabel = document.querySelector("#fullscreen-label");
 const fullscreenStatus = document.querySelector("#fullscreen-status");
+const kioskMode = new URLSearchParams(window.location.search).get("kiosk") === "1";
 
-if (document.fullscreenEnabled) {
+if (!kioskMode && document.fullscreenEnabled) {
   fullscreen.hidden = false;
   fullscreen.addEventListener("click", async () => {
     fullscreenStatus.textContent = "";
