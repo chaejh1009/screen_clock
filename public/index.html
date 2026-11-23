@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101e26">
+  <title>풍경 시계</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="clock.js" defer></script>
+</head>
+<body>
+  <main class="screen" aria-label="풍경 시계">
+    <div class="landscapes" aria-hidden="true">
+      <img class="landscape is-current" src="photos/moraine-lake.webp" alt="" fetchpriority="high"
+           data-name="모레인 호수" data-region="캐나다 · 밴프 국립공원">
+      <img class="landscape" src="photos/cabo-da-roca.webp" alt="" decoding="async"
+           data-name="로카곶" data-region="포르투갈" style="--focus: 64% 50%">
+      <img class="landscape" src="photos/sossusvlei.webp" alt="" decoding="async"
+           data-name="소수스블레이" data-region="나미비아">
+      <img class="landscape" src="photos/zurich.webp" alt="" decoding="async"
+           data-name="취리히호의 아침" data-region="스위스">
+    </div>
+
+    <header class="toolbar">
+      <button id="fullscreen" class="fullscreen" type="button" hidden>
+        <span class="fullscreen-icon" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span id="fullscreen-label">전체 화면</span>
+      </button>
+      <p id="fullscreen-status" class="fullscreen-status" role="status"></p>
+    </header>
+
+    <section class="clock" aria-label="현재 시각">
+      <div class="clock-date"><time id="calendar-date"></time></div>
+      <time id="clock-time" class="clock-time">
+        <span id="hour-minute" class="clock-main">--:--</span><span class="visually-hidden">:</span><span id="second" class="clock-second">--</span>
+      </time>
+      <noscript><p>시각을 표시하려면 JavaScript를 켜 주세요.</p></noscript>
+    </section>
+
+    <footer class="photo-bar">
+      <div class="location">
+        <p id="photo-name" class="photo-name">모레인 호수</p>
+        <p id="photo-region" class="photo-region">캐나다 · 밴프 국립공원</p>
+      </div>
+      <div id="photo-controls" class="photo-controls" role="group" aria-label="풍경 사진" hidden>
+        <div id="photo-steps" class="photo-steps" role="group" aria-label="사진 선택"></div>
+        <button id="playback" class="playback" type="button" aria-label="사진 일시 정지" title="사진 일시 정지">
+          <span class="playback-icon" aria-hidden="true"></span>
+        </button>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>
