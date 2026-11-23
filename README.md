@@ -1,6 +1,6 @@
 # 풍경 시계
 
-사진 위에 24시간제 현재 시각과 날짜를 표시합니다. 사진 네 장이 20초마다 순서대로 바뀝니다. 하단에서 사진 선택과 일시 정지, 상단에서 전체 화면 전환이 가능합니다.
+사진 위에 24시간제 현재 시각과 날짜를 표시합니다. 풍경 일곱 장 사이에 회고록 쓰기를 권하는 장면 두 장이 섞여 있으며, 사진은 20초마다 바뀝니다. 하단에서 사진 선택과 일시 정지, 상단에서 전체 화면 전환이 가능합니다.
 
 ## 라즈베리파이에서 실행
 
@@ -34,13 +34,18 @@ python3 -m http.server 8000 --directory public
 
 ## 사진과 전환 간격 변경
 
-`public/photos/`에 사진을 넣고 `public/index.html`의 `.landscape` 이미지 목록에서 `src`, `data-name`, `data-region`을 바꿉니다. `public/clock.js`의 `photoInterval`은 밀리초 단위입니다.
+`public/photos/`에 사진을 넣고 `public/index.html`의 `.landscape` 이미지 목록에서 `src`, `data-name`, `data-region`을 바꿉니다. 회고록 장면에는 `data-memoir`를 붙이고 `data-name`과 `data-region`에 제목과 문구를 넣습니다. `public/clock.js`의 `photoInterval`은 밀리초 단위입니다.
 
 ## 사진 출처
 
 - 모레인 호수 · [Joshua Woroniecki](https://unsplash.com/photos/o5nOR7XVPZw)
 - 로카곶 · [Ivan Jenic](https://unsplash.com/photos/mEIOTXJdcuQ)
 - 소수스블레이 · [Jules Bassoleil](https://unsplash.com/photos/fZ7yYZIJcqA)
+- 회고록 노트 · [Clay Banks](https://unsplash.com/photos/n9AaeihA9HI)
 - 취리히호 · [Christopher Politano](https://unsplash.com/photos/b3tCTbTfqdY)
+- 제주 성산의 해안 · [N Riazi](https://unsplash.com/photos/RjD376jWJXQ)
+- 키르큐펠의 오로라 · [Landon Arnold](https://unsplash.com/photos/PMdiRXbAbhY)
+- 레드우드 숲 · [Zetong Li](https://unsplash.com/photos/iFTqbA-TGhs)
+- 회고록 인화 사진 · [Heather Newsom](https://unsplash.com/photos/0Hmh5aYIHpA)
 
 사진은 [Unsplash 라이선스](https://unsplash.com/license)를 따릅니다. 글꼴 라이선스는 `public/fonts/`에 있습니다.

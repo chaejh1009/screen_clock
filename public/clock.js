@@ -34,6 +34,7 @@ function updateClock() {
 }
 
 const photos = Array.from(document.querySelectorAll(".landscape"));
+const clockScreen = document.querySelector(".screen");
 const photoName = document.querySelector("#photo-name");
 const photoRegion = document.querySelector("#photo-region");
 const photoControls = document.querySelector("#photo-controls");
@@ -69,6 +70,7 @@ function showPhoto(index) {
   const photo = photos[currentPhoto];
   photo.classList.add("is-current");
   steps[currentPhoto].setAttribute("aria-current", "true");
+  clockScreen.classList.toggle("is-memoir", photo.hasAttribute("data-memoir"));
   photoName.textContent = photo.dataset.name;
   photoRegion.textContent = photo.dataset.region;
   schedulePhoto();

@@ -101,8 +101,12 @@ button:focus-visible {
 .landscapes::after {
   content: "";
   background:
-    radial-gradient(ellipse at 50% 45%, rgb(5 13 19 / 54%), transparent 72%),
+    radial-gradient(ellipse at 50% 45%, rgb(5 13 19 / var(--clock-shade, 54%)), transparent 72%),
     linear-gradient(180deg, rgb(5 13 19 / 38%), transparent 28%, rgb(5 13 19 / 13%) 62%, rgb(5 13 19 / 80%));
+}
+
+.screen.is-memoir {
+  --clock-shade: 66%;
 }
 
 .toolbar {
@@ -241,6 +245,21 @@ button:focus-visible {
   line-height: 1.5;
 }
 
+.is-memoir .location {
+  --accent: #f4cc9f;
+  max-width: 34rem;
+}
+
+.is-memoir .photo-name {
+  color: #fff5e8;
+  font-size: clamp(1.25rem, 2.7vw, 2.125rem);
+}
+
+.is-memoir .photo-region {
+  color: #fcebd9;
+  font-size: clamp(0.9375rem, 1.45vw, 1.125rem);
+}
+
 .photo-controls {
   display: inline-flex;
   align-items: center;
@@ -266,7 +285,7 @@ button:focus-visible {
 }
 
 .photo-step {
-  width: 2rem;
+  width: clamp(1.5rem, 3.2vw, 2rem);
 }
 
 .photo-step::before {
